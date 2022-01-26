@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+from .secrets import Config
+from .environments import ALLOWED_ENVS, ENV_LOCAL, ENV_PROD
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,6 +29,13 @@ SECRET_KEY = 'django-insecure-7$)185soor4(ra23j6^pd3x9vjr!n!_voz_gr^-5a*7q==#7py
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Current ENVIRONMENT config
+HOUMAPI_ENV = os.environ.get('HOUMAPI_ENV', ENV_LOCAL)
+if HOUMAPI_ENV == ENV_PROD:
+    DEBUG = False
+if HOUMAPI_ENV not in ALLOWED_ENVS:
+    raise Exception('HOUMAPI_ENV must be on of ({})'.format(ALLOWED_ENVS))
+
 ALLOWED_HOSTS = []
 
 
@@ -38,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'locator',
 ]
 
 MIDDLEWARE = [
@@ -74,12 +86,38 @@ WSGI_APPLICATION = 'houmapi.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+Config.set_database_credentials(env=HOUMAPI_ENV)
+
+if not Config.DATABASE_CRED:
+    raise Exception("Can not setup database configuration for {} not defined".format(HOUMAPI_ENV))
+
+if HOUMAPI_ENV == ENV_PROD:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': Config.DATABASE_CRED['NAME'],
+            'USER': Config.DATABASE_CRED['USER'],
+            'PASSWORD': Config.DATABASE_CRED['PASSWORD'],
+            'HOST': Config.DATABASE_CRED['HOST'],
+            'PORT': Config.DATABASE_CRED['PORT'],
+            'ATOMIC_REQUESTS': True
+        }
     }
-}
+elif HOUMAPI_ENV == ENV_LOCAL:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': Config.DATABASE_CRED['NAME'],
+            'USER': Config.DATABASE_CRED['USER'],
+            'PASSWORD': Config.DATABASE_CRED['PASSWORD'],
+            'HOST': Config.DATABASE_CRED['HOST'],
+            'PORT': Config.DATABASE_CRED['PORT'],
+            'ATOMIC_REQUESTS': True
+        }
+    }
+else:
+    raise Exception("Database configuration for {} not defined".format(HOUMAPI_ENV))
+
 
 
 # Password validation

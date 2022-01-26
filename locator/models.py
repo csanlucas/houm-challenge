@@ -1,3 +1,9 @@
 from django.db import models
 
-# Create your models here.
+class HoumerLocation(models.Model):
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    houmerId = models.CharField(max_length=50)
+    deviceId = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now=True)
+
