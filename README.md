@@ -49,12 +49,14 @@ exit
 
 ## Solución planteada y uso
 Se realiza el desarrollo de un REST Api haciendo uso del siguiente stack de tecnologías:
+
     - Python 3.10+
     - Django 3.2.11
     - Django-Rest-Framework 3.13.1
 
 Manejo de entornos de desarrollo para agilizar el cambio de variables de accesso y settings de DRF dependiendo el entorno al que
 se hará deployment
+
     - LOCAL
     - PROD
 
@@ -110,17 +112,22 @@ Se debe realizar los request a los endpoints haciendo uso de algún cliente de H
     * **Code** 200 <br/>
     **Content** 
     ```json
-    [
-        {
-            "visited_by": 1,
-            "arrive_at": "2022-01-27T03:24:12.864839Z",
-            "departure_at": "2022-01-27T06:30:28.618000Z",
-            "latitude": -33.456329,
-            "longitude": -70.644175,
-            "elapsed_time_ms": 11175753,
-            "elapsed_time_str": "3:06:15.753161"
-        }
-    ]
+    {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+            {
+                "visited_by": 1,
+                "arrive_at": "2022-01-27T03:24:12.864839Z",
+                "departure_at": "2022-01-27T06:30:28.618000Z",
+                "latitude": -33.456329,
+                "longitude": -70.644175,
+                "elapsed_time_ms": 11175753,
+                "elapsed_time_str": "3:06:15.753161"
+            }
+        ]
+    }
     ```
 ---
 #### [FUNCIONALIDAD 3] - Para un día retorne todos los momentos en que el houmer se trasladó con una velocidad superior a cierto parámetro
@@ -137,34 +144,39 @@ Se debe realizar los request a los endpoints haciendo uso de algún cliente de H
     * **Code** 200 <br/>
     **Content** 
     ```json
-    [
-        {
-            "id": 5,
-            "latitude": -2.11488,
-            "longitude": -79.968221,
-            "deviceId": "DVID-TABLET1",
-            "created_at": "2022-01-27T06:54:26.062454Z",
-            "velocity_kmh": 110,
-            "houmerId": 1
-        },
-        {
-            "id": 6,
-            "latitude": -2.11488,
-            "longitude": -79.968221,
-            "deviceId": "DVID-TABLET1",
-            "created_at": "2022-01-27T06:54:31.585970Z",
-            "velocity_kmh": 115,
-            "houmerId": 1
-        },
-        {
-            "id": 7,
-            "latitude": -2.11488,
-            "longitude": -79.968221,
-            "deviceId": "DVID-TABLET1",
-            "created_at": "2022-01-27T06:54:38.501648Z",
-            "velocity_kmh": 140,
-            "houmerId": 1
-        }
-    ]
+    {
+        "count": 3,
+        "next": null,
+        "previous": null,
+        "results": [
+            {
+                "id": 5,
+                "latitude": -2.11488,
+                "longitude": -79.968221,
+                "deviceId": "DVID-TABLET1",
+                "created_at": "2022-01-27T06:54:26.062454Z",
+                "velocity_kmh": 110,
+                "houmerId": 1
+            },
+            {
+                "id": 6,
+                "latitude": -2.11488,
+                "longitude": -79.968221,
+                "deviceId": "DVID-TABLET1",
+                "created_at": "2022-01-27T06:54:31.585970Z",
+                "velocity_kmh": 115,
+                "houmerId": 1
+            },
+            {
+                "id": 7,
+                "latitude": -2.11488,
+                "longitude": -79.968221,
+                "deviceId": "DVID-TABLET1",
+                "created_at": "2022-01-27T06:54:38.501648Z",
+                "velocity_kmh": 140,
+                "houmerId": 1
+            }
+        ]
+    }
     ```
 ---
