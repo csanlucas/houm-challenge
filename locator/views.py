@@ -11,6 +11,26 @@ from .models import HoumerLocation, Houmer, Property
 
 
 class HoumerLocationViewSet(APIView):
+    def get(self, request):
+        if all(k in request.query_params for k in ("houmer_id", "on_date", "velocity_kmh")):
+            try:
+                velocity_kmh = int(request.query_params['velocity_kmh'])
+            except ValueError:
+                return Response({'message': 'Provide a valid integer query_params [velocity_kmh]'}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                query_date = dt.datetime.fromisoformat(request.query_params['on_date'])
+                query_date = timezone.get_current_timezone().localize(query_date)
+            except ValueError:
+                return Response({'message': 'Check on date params must be in format YYYY-MM-DD'}, status=status.HTTP_400_BAD_REQUEST)
+            houmer = get_object_or_404(Houmer, pk=request.query_params['houmer_id'])
+            locations_filtered = houmer.locations.filter(created_at__gt=query_date,
+                created_at__lt=query_date.replace(hour=23, minute=59, second=59), velocity_kmh__gt=request.query_params['velocity_kmh'])
+            location_serializer = HoumerLocationSerializer(instance=locations_filtered, many=True)
+            return Response(data=location_serializer.data)
+        locations = HoumerLocation.objects.all()
+        serializer = HoumerLocationSerializer(locations, many=True)
+        return Response(data=serializer.data)
+
     def post(self, request, format=None):
         validator = HoumerLocationSerializer(data=request.data)
         validator.is_valid(raise_exception=True)

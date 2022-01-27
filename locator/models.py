@@ -12,6 +12,7 @@ class HoumerLocation(models.Model):
     houmerId = models.ForeignKey(Houmer, on_delete=models.CASCADE, related_name='locations')
     deviceId = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now=True)
+    velocity_kmh = models.PositiveSmallIntegerField(default=0, blank=True)
 
 
 class Property(models.Model):
