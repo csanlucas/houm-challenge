@@ -26,9 +26,17 @@ git clone https://github.com/csanlucas/houm-challenge.git
 **2)** Ingresar a la carpeta del proyecto y ejecutar docker-compose up, este comando realizará la configuración de las imágenes de Docker para backend y para la DB
 ```sh
 cd houm-challenge
+cp .env.example .env
+cp .pgenv.example .pgenv
 docker-compose up
 ```
-**3)** [Optional] Dump data backup para inicializar data de entorno de desarrollo, para ser consultada y realizar operaciones desde los Rest APIs endpoints
+**3)** Aplicar migrations para Django
+```sh
+docker-compose exec backend bash
+python manage.py migrate
+exit
+```
+**4)** [Optional] Dump data backup para inicializar data de entorno de desarrollo, para ser consultada y realizar operaciones desde los Rest APIs endpoints
 ```sh
 cp init_backup.sql .dbdata/
 docker-compose exec db bash
@@ -45,7 +53,15 @@ Se realiza el desarrollo de un REST Api haciendo uso del siguiente stack de tecn
     - Django 3.2.11
     - Django-Rest-Framework 3.13.1
 
-### **Asunciones**
+Manejo de entornos de desarrollo para agilizar el cambio de variables de accesso y settings de DRF dependiendo el entorno al que
+se hará deployment
+    - LOCAL
+    - PROD
+
+Gestión de archivos de secrets, como variables de entorno, idealmente sus valores no se hacen tracking en git pero en esta situación
+para facilitar la ejecución del proyecto se hace tracking de *.example
+
+### **SUPUESTOS**
     - Se mantiene un registro de varios Houmers en nuestra base de datos para vincular las diferentes acciones realizadas
     - [En funcionalidad 2] Cuando se registra la ubicación del houmer se puede mantener un proceso que busque las propiedades registradas, en caso de existir una permitida, la aplicación envia un request hacer el registro de visita a la propiedad.
     Luego de existir una variacion de la ubicacion en la app se hace una actualizacion llamando al ENDPOINT para indicar la hora de salida. Por lo que se asume que en este requerimiento ya existen y se encuentran almacenados, los registros de hora y salida de visita a la propiedad.
